@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+    apache:
+        container_name: apache
+        build: 
+            context: ./apache-conf
+            dockerfile: Dockerfile
+        ports:
+            - 80:80
+        volumes:
+            - ./apache-conf/extra:/usr/local/apache2/conf/extra/private
+            - ./projects:/usr/local/apache2/htdocs
+            
+    php-fpm:
+        container_name: php-fpm
+        build: php-fpm
+        volumes:
+            - ./projects:/var/www/html
+
+    mysql:
+        image: mysql:8.0.30
+        ports:
+            - 3306:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: password
+        volumes:
+            - ./mysql:/var/lib/mysql 
+
+    phpmyadmin:
+        image: phpmyadmin:5.1.0
+        ports:
+            - 8080:80
+        environment:
+            PMA_HOST: mysql
+            PMA_PORT: 3306
+
+    redis:
+        image: redis:6.2-alpine
